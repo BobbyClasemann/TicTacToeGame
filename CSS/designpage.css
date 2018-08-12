@@ -1,3 +1,7 @@
 table {
     background-color: pink;
 }
+
+td {
+    width: 500px;
+}
