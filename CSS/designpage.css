@@ -3,16 +3,11 @@ table {
 }
 
 td {
-    width: 500px;
-}
-
-
-.row0 {
-    border-bottom: 5px solid black;
-
+    width: 300px;
 }
 
 .row1 {
+    border-top: 5px solid black;
     border-bottom: 5px solid black;
 }
 
