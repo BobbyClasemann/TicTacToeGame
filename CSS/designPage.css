@@ -1,20 +1,29 @@
 table {
-    background-color: white;
     margin: 0 auto;
 }
 
+body {
+    background-image: url("TTTpic.jpg");
+}
+
 td {
+
     height: 280px;
     width: 1000px;
     text-align: center;
+    padding: 10px 110px 10px 110px;
+    color: cornsilk;
+    font-size: 500%;
+    margin: inherit;
 }
 
 .row1 {
-    border-top: 1px solid black;
-    border-bottom: 1px solid black;
+    border-top: 2px solid;
+    border-bottom: 2px solid;
 }
 
 .col1 {
-    border-left: 1px solid black;
-    border-right: 1px solid black;
+    border-left: 2px solid;
+    border-right: 2px solid;
 }
+
