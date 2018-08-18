@@ -8,53 +8,15 @@ td {
 
 
 .row0 {
-    border: 5px solid black;
+    border-bottom: 5px solid black;
+
 }
 
-#01 {
-    border-left-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
+.row1 {
+    border-bottom: 5px solid black;
 }
 
-#02 {
-    border-left-style: solid;
-    border-bottom-style: solid;
-}
-
-#10 {
-    border-top-style: solid;
-    border-bottom-style: solid;
-    border-right-style: solid;
-}
-
-#11 {
-    border-style: solid;
-}
-
-#12 {
-    border-left-style: solid;
-    border-top-style: solid;
-    border-bottom-style: solid;
-}
-
-#20 {
-    border-top-style: solid;
-    border-right-style: solid;
-}
-
-#21 {
-    border-left-style: solid;
-    border-top-style: solid;
-    border-right-style: solid;
-}
-
-#22 {
-    border-left-style: solid;
-    border-top-style: solid;
-}
-
-#00, #01, #02, #10, #11, #12, #20, #21, #22 {
-    border-color: black;
-    background-color: white;
+.col1 {
+    border-left: 5px solid black;
+    border-right: 5px solid black;
 }
