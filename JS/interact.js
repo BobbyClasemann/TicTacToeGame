@@ -1,5 +1,5 @@
 function processTurn(ID){
-    var content = document.getElementById(ID).value;
+    var content = document.getElementById(ID).innerHTML;
     console.log(content);
 
     //cannot change the existing element
