@@ -9,15 +9,14 @@ function processTurn(ID){
 
     var playChar = document.getElementById("playingChar").value;   //get current play character
     console.log(playChar);
-    document.getElementById(ID).value = playChar;               //change node to current play character
-    document.getElementById(ID).innerHTML = playChar;
+    document.getElementById(ID).innerHTML = playChar;               //change node to current play character
 
     //reset hidden filed to next player's character
     if (playChar == "X") {
         document.getElementById("playingChar").value = "O";        //change current play char to O
         console.log("O");
     }
-    else {
+    else if (playChar == "O"){
         document.getElementById("playingChar").value = "X";        //change current play char to X
         console.log("X");
     }
