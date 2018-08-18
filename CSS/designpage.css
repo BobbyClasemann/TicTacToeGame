@@ -1,5 +1,6 @@
 table {
     background-color: white;
+    margin: 0 auto;
 }
 
 td {
@@ -16,8 +17,4 @@ td {
 .col1 {
     border-left: 1px solid black;
     border-right: 1px solid black;
-}
-
-table {
-    margin: 0 auto;
 }
