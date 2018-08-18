@@ -5,3 +5,51 @@ table {
 td {
     width: 500px;
 }
+
+#00 {
+    border-bottom: solid;
+    border-right: solid;
+}
+
+#01 {
+    border-left: solid;
+    border-right: solid;
+    border-bottom: solid;
+}
+
+#02 {
+    border-left: solid;
+    border-bottom: solid;
+}
+
+#10 {
+    border-top: solid;
+    border-bottom: solid;
+    border-right: solid;
+}
+
+#11 {
+    border: solid;
+}
+
+#12 {
+    border-left: solid;
+    border-top: solid;
+    border-bottom: solid;
+}
+
+#20 {
+    border-top: solid;
+    border-right: solid;
+}
+
+#21 {
+    border-left: solid;
+    border-top: solid;
+    border-right: solid;
+}
+
+#22 {
+    border-left: solid;
+    border-top: solid;
+}
