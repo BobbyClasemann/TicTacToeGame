@@ -15,10 +15,11 @@ td {
 }
 
 .row1 {
-    border-bottom: 5px solid black;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
 }
 
 .col1 {
-    border-left: 5px solid black;
-    border-right: 5px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
 }
