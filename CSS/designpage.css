@@ -53,3 +53,7 @@ td {
     border-left: solid;
     border-top: solid;
 }
+
+#00, #01, #02, #10, #11, #12, #20, #21, #22 {
+    border-color: black;
+}
