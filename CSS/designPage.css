@@ -26,7 +26,7 @@ td {
     border-right: 2px solid;
 }
 
-#winner {
+#winner, #playerTurn {
     color: white;
     font-size: 200%;
 }

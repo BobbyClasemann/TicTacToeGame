@@ -15,19 +15,21 @@ function processTurn(ID){
     //reset hidden filed to next player's character
     if (playChar === "X") {
         document.getElementById("playingChar").value = "O";        //change current play char to O
+        document.getElementById("playerTurn").innerHTML = "Player 2's Turn";
         //console.log("O");
     }
     else if (playChar === "O"){
         document.getElementById("playingChar").value = "X";       //change current play char to X
+        document.getElementById("playerTurn").innerHTML = "Player 1's Turn";
         //console.log("X");
     }
 
 
-    if (checkDrawCondition())
-        displayDrawMsg();
-    else
-        displayWinMsg(checkWinningCondition());
+    var arr = checkWinningCondition();
+    displayWinMsg(arr);
 
+    if (checkDrawCondition() && !arr[0])
+        displayDrawMsg();
 
 }
 
@@ -38,6 +40,8 @@ function displayWinMsg(arr){
         //arr[1] contains the winning character
         if(arr[1] === 'X')
             winningPlayer = 1;
+
+        document.getElementById("playerTurn").innerHTML = "";
         document.getElementById("winner").innerHTML = ("Game Over. Player " + winningPlayer + " won.");
 
         document.getElementById("playingChar").value = "Game Over"; // Sentinel value is "Game Over"
@@ -68,7 +72,7 @@ function getGrid() {
 
 
 function displayDrawMsg(){
-
+    document.getElementById("playerTurn").innerHTML = "";
     document.getElementById("winner").innerHTML = ("Draw Game.");
     document.getElementById("playingChar").value = "Draw";
 }
@@ -189,3 +193,23 @@ console.log("FINAL " + char);
     return arr; // want to return so user can see message after X or O has been placed on the grid
 }
 
+function resetGame(){
+    var tableObj = document.getElementById("tictactoe");
+
+    var size = document.getElementById("tictactoe").rows.length;
+    // making a 3x3 array in JS
+    var grid = new Array(size);
+    for (var i = 0; i < size; i++)
+        grid[i] = new Array(size);
+
+    //reset each token in the grid
+    for (var i = 0; i < size; i++) {
+        for (var j = 0; j < size; j++) {
+            document.getElementById(i.toString() + j.toString()).innerHTML = "";
+        }
+    }
+
+    document.getElementById("winner").innerHTML = "";       //reset end game message
+    document.getElementById("playingChar").value = "X";    //reset to player 1
+    document.getElementById("playerTurn").innerHTML = "Player 1's Turn";    //reset to player 1's turn
+}
