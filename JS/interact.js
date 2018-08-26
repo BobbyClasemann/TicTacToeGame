@@ -1,6 +1,5 @@
 function processTurn(ID){
     var content = document.getElementById(ID).innerHTML;
-    console.log(content);
 
     //cannot change the existing element
     if (content === "O" || content === "X") {
@@ -8,7 +7,6 @@ function processTurn(ID){
     }
 
     var playChar = document.getElementById("playingChar").value;   //get current play character
-    console.log(playChar);
     if(playChar === "X" || playChar === "O")
         document.getElementById(ID).innerHTML = playChar;               //change node to current play character
 
@@ -16,12 +14,10 @@ function processTurn(ID){
     if (playChar === "X") {
         document.getElementById("playingChar").value = "O";        //change current play char to O
         document.getElementById("playerTurn").innerHTML = "Player 2's Turn";
-        //console.log("O");
     }
     else if (playChar === "O"){
         document.getElementById("playingChar").value = "X";       //change current play char to X
         document.getElementById("playerTurn").innerHTML = "Player 1's Turn";
-        //console.log("X");
     }
 
 
@@ -60,8 +56,6 @@ function getGrid() {
 
     for (var i = 0; i < size; i++) {
         for (var j = 0; j < size; j++) {
-            //console.log('i: ' + i + " j: " + j);
-            //console.log("contents: " + tableObj.rows[i].cells.item(j).innerHTML);
             grid[i][j] = tableObj.rows[i].cells.item(j).innerHTML;
         }
     }
@@ -101,24 +95,18 @@ function checkWinningCondition(){
     var arr = getGrid();
     var grid = arr[0];
     var size = arr[1];
-
-    console.log(grid);
-
-    console.log("length" + grid.length);
     var win = false; // assume there is not a win
     var char;
     // now checking winning conditions, every row and column and 2 diagonals are possible winning conditions
     var diagNumSameChar = 0;
 
     // Check Rows
-    for (var i = 0; i < grid.length && !win; i++) {
+    for (var i = 0; i < size && !win; i++) {
         char = grid[i][0]; // check if all characters along the row are the same
         var rowNumSameChar = 0; // number of x's or o's in a row along a row, column, or diagonal
         var colNumSameChar = 0;
        // var colNumSameChar = 0;
-        for (var j = 0; j < grid[i].length && !win; j++){
-            console.log("char " + char);
-            console.log("grid val " + grid[i][j]);
+        for (var j = 0; j < size && !win; j++){
             // char could be undefined, if char is not undefined but the rest of the grid elements are
             // they won't be equal so this will still work
             if ((char === grid[i][j]) && (char === 'X' || char === 'O')) {
@@ -131,12 +119,10 @@ function checkWinningCondition(){
 
             // top left to bottom right diagonal
             var diagChar = grid[0][0];
-            console.log("i: " + i + "j: " + j);
             if((diagChar === grid[j][j]) && i === j && (diagChar === "X" || diagChar === "O"))
                 diagNumSameChar++;
             if(diagNumSameChar === 3){
                 char = diagChar;
-                console.log("WINNER: " + char);
                 win = true;
             }
 
@@ -145,7 +131,7 @@ function checkWinningCondition(){
         if(!win){
             // columns
             char = grid[0][i];
-            for (var k = 0; k < grid[i].length && !win; k++){
+            for (var k = 0; k < size && !win; k++){
                 if ((char === grid[k][i]) && (char === 'X' || char === 'O')) {
                     colNumSameChar++;
                 }
@@ -175,21 +161,7 @@ function checkWinningCondition(){
         j--;
     }
 
-    // for (var j = 0; j < grid.length && !win; j++) {
-    //     char = grid[0][j]; //check if all characters along column are the same
-    //     var colNumSameChar = 0; // number of x's or o's in the column
-    //     //check if the character in the column is the same and is a valid token
-    //     for (var i = 0; i < grid[j].length && !win; i++) {
-    //         if ((char === grid[i][j] && char === 'X' || char === 'Y')) {
-    //             colNumSameChar++;
-    //         }
-    //         if (colNumSameChar === 3){
-    //             win = true;
-    //         }
-    //     }
-    // }
     var arr = [win, char];
-console.log("FINAL " + char);
     return arr; // want to return so user can see message after X or O has been placed on the grid
 }
 
