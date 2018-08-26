@@ -23,9 +23,10 @@ function processTurn(ID){
     }
 
 
-
-
-    displayGameOverMsg(checkWinningCondition());
+    if (checkDrawCondition())
+        displayDrawMsg();
+    else
+        displayWinMsg(checkWinningCondition());
 
 
 }
@@ -61,7 +62,7 @@ function getGrid() {
         }
     }
 
-    return grid;
+    return [grid, size];
 
 }
 
@@ -73,7 +74,10 @@ function displayDrawMsg(){
 }
 
 function checkDrawCondition(){
-    var grid = getGrid();
+    var arr = getGrid();
+    var grid = arr[0];
+    var size = arr[1];
+
     var slotsFilled = 0;
 
     for(var i = 0; i < size; i++)
@@ -82,13 +86,17 @@ function checkDrawCondition(){
                 slotsFilled++;
 
     if(slotsFilled === 9){
+        return true;
+    } else {
+        return false;
     }
 }
 
 
 function checkWinningCondition(){
-
-    var grid = getGrid();
+    var arr = getGrid();
+    var grid = arr[0];
+    var size = arr[1];
 
     console.log(grid);
 
