@@ -1,5 +1,5 @@
 table {
-    margin: 0 auto;
+    margin: 10px auto;
 }
 
 body {
@@ -8,13 +8,12 @@ body {
 
 td {
 
-    height: 280px;
+    height: 260px;
     width: 1000px;
     text-align: center;
     padding: 10px 110px 10px 110px;
     color: cornsilk;
-    font-size: 500%;
-    margin: inherit;
+    font-size: 400%;
 }
 
 .row1 {
@@ -27,3 +26,7 @@ td {
     border-right: 2px solid;
 }
 
+#winner {
+    color: white;
+    font-size: 200%;
+}
