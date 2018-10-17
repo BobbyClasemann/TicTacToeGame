@@ -26,7 +26,6 @@ function processTurn(ID){
 
     if (checkDrawCondition() && !arr[0])
         displayDrawMsg();
-
 }
 
 function displayWinMsg(arr){
