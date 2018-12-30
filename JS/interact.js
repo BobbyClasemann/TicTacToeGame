@@ -261,15 +261,38 @@ function getMinElement (arr){
     if (arr.length == 0)
         return false;
 
-    var min = arr[0];   //assume first value in array is the min
+    var min = arr[0][0];   //assume first value in array is the min
+    var minIndex = 0;
 
     //compare min to every value in array to find actual minimum value
     for (var i = 1; i < arr.length; i++){
-        if (arr[i] < min)
-            min = arr[i];
+        if (arr[i][0] < min) {
+            min = arr[i][0];
+            minIndex = i;
+        }
+
     }
 
-    return min;
+    return arr[minIndex];
+}
+
+function getMaxElement (arr){
+    //if array has no values, return 0; error case
+    if (arr.length == 0)
+        return false;
+
+    var max = arr[0][0];   //assume first value in array is the max
+    var maxIndex = 0;
+
+    //compare min to every value in array to find actual maximum value
+    for (var i = 1; i < arr.length; i++){
+        if (arr[i][0] > max) {
+            max = arr[i][0];
+            maxIndex = i;
+        }
+    }
+
+    return arr[maxIndex];
 }
 
 function makeMoveGrid (board){
@@ -326,8 +349,12 @@ var items = [
     ['O', 'X', 'O']
 ];
 
-alert(getMaxScoreBoardPos(items));
+var arr = [
+    [-10, [1,2]], [0, [2,2]], [10, [1,1]]
+    ];
 
+//alert(getMaxScoreBoardPos(items));
+console.log(getMinElement(arr));
 /*
 var arr =  [];
 alert(getMinElement(arr));
