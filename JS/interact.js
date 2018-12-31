@@ -512,9 +512,10 @@ function calculateScore(board, aiChar, lastPos = false, depth){
 // and will only move if the AI should
 function processAIMove(){
     // only proceed if playing against ai and the player cannot move which means the ai should move
+    // also if game is not in endgame
     var opponent = document.getElementById("switchOpponent").value;
 
-    if (opponent === 'ai' && !playerCanMove()) {
+    if (opponent === 'ai' && !playerCanMove() && !isInEndGame(getBoard())) {
         // process ai move
         var aiChar = (document.getElementById("playingChar").value === "X") ? "O" : "X";
         var scoreArray = calculateScore(getBoard(), aiChar, false, 0);
