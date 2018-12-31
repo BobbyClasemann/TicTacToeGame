@@ -17,12 +17,12 @@ function processTurn(ID){
         //reset hidden filed to next player's character
         if (playChar === "X") {
             document.getElementById("playingChar").value = "O";        //change current play char to O
-            document.getElementById("playerTurn").innerHTML = "Your Turn";
+            document.getElementById("playerTurn").innerHTML = "AI Turn";
         }
         else if (playChar === "O") {
 
             document.getElementById("playingChar").value = "X";       //change current play char to X
-            document.getElementById("playerTurn").innerHTML = "AI Turn";
+            document.getElementById("playerTurn").innerHTML = "Your Turn";
         }
 
 
@@ -33,11 +33,15 @@ function processTurn(ID){
             displayDrawMsg();
 
         // process ai move
-        if (document.getElementById("playingChar").value === 'X'){
-            var scoreArray = calculateScore(getBoard(), 'X');
-            console.log(scoreArray);
+        if (document.getElementById("playingChar").value === 'O'){
+            // for(var i = 0; i < 50000000; i++){
+            //     var j = 0;
+            // }
+
+            var scoreArray = calculateScore(getBoard(), 'O', false, 0);
+            // console.log(scoreArray);
             var board = getBoard();
-            board[scoreArray[1][0]][scoreArray[1][1]] = 'X';
+            board[scoreArray[1][0]][scoreArray[1][1]] = 'O';
             var x = scoreArray[1][0].toString();
             var y = scoreArray[1][1].toString();
             processTurn(x + y);
@@ -79,11 +83,8 @@ function switchOpponent(){
     var opponent = document.getElementById("switchOpponent").value;
     if (opponent === "ai")
         document.getElementById("switchOpponent").value = 'human';
-    else{
+    else
         document.getElementById("switchOpponent").value = 'ai';
-        forceStart();
-    }
-
     resetGame();
 }
 
@@ -240,10 +241,7 @@ function resetGame(){
     document.getElementById("winner").innerHTML = "";       //reset end game message
     document.getElementById("playingChar").value = "X";    //reset to player 1
     document.getElementById("playerTurn").innerHTML = "Player 1's Turn";    //reset to player 1's turn
-    if (document.getElementById("switchOpponent").value === "ai"){
-        forceStart();
-    }
-        }
+}
 
 // returns a character representing the endgame from the perspective of ai Player
 // board is a 3x3 grid of X's and O's
@@ -413,7 +411,7 @@ function getMaxScoreBoardPos(scoreBoard){
 // lastPos is the last position an x or an o was placed
 // Note: lastPos will never be referenced when false because it's referenced only in an endgame scenario which means
 // the board would not be empty and therefore there would be a lastPos
-function calculateScore(board, aiChar, lastPos = false){
+function calculateScore(board, aiChar, lastPos = false, depth){
     var scorePosArr = []; // each element will be [score, [x,y]]
 
     if(!isInEndGame(board)){
@@ -430,20 +428,20 @@ function calculateScore(board, aiChar, lastPos = false){
             moveGrid[x][y] = false;// avoid recursive calls with the same board configuration
             var newBoard = boardCopy(board);
             newBoard[x][y] = whoseTurn(newBoard);
-            scorePosArr.push(calculateScore(newBoard, aiChar, position));// recursive call
+            scorePosArr.push(calculateScore(newBoard, aiChar, position, depth + 1));// recursive call
         }
     } else { // end game
         var endGameChar = getEndGame(board, aiChar);
 
         switch(endGameChar) {
             case "W":
-                scorePosArr.push([10, lastPos]);
+                scorePosArr.push([10 - depth, lastPos]);
                 break;
             case "D":
                 scorePosArr.push([0, lastPos]);
                 break;
             case "L":
-                scorePosArr.push([-10, lastPos]);
+                scorePosArr.push([-10 - depth, lastPos]);
                 break;
             default:
                 // error out
@@ -452,7 +450,10 @@ function calculateScore(board, aiChar, lastPos = false){
     // The board is in a state where a player just made a move, so to get the player that just moved
     // we have to reverse whose turn it is currently
     // if it's the ai's turn, we get the maximum element, if it's the human's turn we get the min element
-    var ch = whoseTurn(board);
+    if(depth == 1)
+        console.log(lastPos);
+    if(depth == 0)
+        console.log(scorePosArr);
     return (aiChar != whoseTurn(board)) ? getMaxElement(scorePosArr) : getMinElement(scorePosArr);
 }
 
@@ -462,15 +463,15 @@ function calculateScore(board, aiChar, lastPos = false){
 //     ['', 'O', 'O']
 // ];
 
-var board = [
-    ['X', 'O', 'O'],
-    ['X', 'O', 'X'],
-    ['', '', '']
-];
-
-var aiChar = 'X';
-
-console.log(calculateScore(board, aiChar));
+// var board = [
+//     ['X', 'O', 'O'],
+//     ['X', 'O', 'X'],
+//     ['', '', '']
+// ];
+//
+// var aiChar = 'X';
+//
+// console.log(calculateScore(board, aiChar));
 //
 // var arr = [
 //     [-10, [1,2]], [0, [2,2]], [10, [1,1]]
@@ -508,14 +509,3 @@ var items = [
 alert(checkPossibleMovesLeft(items));
 */
 
-function forceStart(){
-    var scoreArray = calculateScore(getBoard(), 'X');
-    console.log(scoreArray);
-    var board = getBoard();
-    board[scoreArray[1][0]][scoreArray[1][1]] = 'X';
-    var x = scoreArray[1][0].toString();
-    var y = scoreArray[1][1].toString();
-    processTurn(x + y);
-}window.onload = function() {
-    forceStart();
-};
