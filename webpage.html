@@ -30,9 +30,10 @@
     </script>
 
     <p id="winner"></p>
-    <p id="playerTurn">Player 1's Turn</p>
+    <p id="playerTurn" onclick="changePlayingChar()">Player Turn (X)</p>
     <input id="playingChar" type="hidden" value="X">
     <label class="switch"><input type="checkbox" id="switchOpponent" onclick="switchOpponent()" value="ai"><div class="slider round"><!--ADDED HTML --><span class="human">VS Human</span><span class="ai">VS AI</span><!--END--></div></label>
+
     <button type="button" id="btnResetGame" onclick="resetGame()">Reset Game</button>
 </body>
 </html>

@@ -5,26 +5,14 @@ function processTurn(ID){
     if (opponent === 'ai'){
         var content = document.getElementById(ID).innerHTML;
 
-        //cannot change the existing element
-        if (content === "O" || content === "X") {
+        //cannot change the existing element or the player has to wait for the ai to move
+        if (content === "O" || content === "X" || !playerCanMove()) {
             return;
         }
 
         var playChar = document.getElementById("playingChar").value;   //get current play character
         if (playChar === "X" || playChar === "O")
-            document.getElementById(ID).innerHTML = playChar;               //change node to current play character
-
-        //reset hidden filed to next player's character
-        if (playChar === "X") {
-            document.getElementById("playingChar").value = "O";        //change current play char to O
-            document.getElementById("playerTurn").innerHTML = "AI Turn";
-        }
-        else if (playChar === "O") {
-
-            document.getElementById("playingChar").value = "X";       //change current play char to X
-            document.getElementById("playerTurn").innerHTML = "Your Turn";
-        }
-
+            document.getElementById(ID).innerHTML = playChar;          //change node to current play character
 
         var arr = checkWinningCondition();
         displayWinMsg(arr);
@@ -32,20 +20,7 @@ function processTurn(ID){
         if (checkDrawCondition() && !arr[0])
             displayDrawMsg();
 
-        // process ai move
-        if (document.getElementById("playingChar").value === 'O'){
-            // for(var i = 0; i < 50000000; i++){
-            //     var j = 0;
-            // }
-
-            var scoreArray = calculateScore(getBoard(), 'O', false, 0);
-            // console.log(scoreArray);
-            var board = getBoard();
-            board[scoreArray[1][0]][scoreArray[1][1]] = 'O';
-            var x = scoreArray[1][0].toString();
-            var y = scoreArray[1][1].toString();
-            processTurn(x + y);
-        }
+        //processAIMove();
     }
     else {
 
@@ -79,26 +54,78 @@ function processTurn(ID){
     }
 }
 
+// this function ensures the player does not move when the ai has not yet moved
+// doesn't check for endgames
+function playerCanMove(){
+    var opponent = document.getElementById("switchOpponent").value;
+
+    if (opponent === 'ai'){
+        var nextChar = whoseTurn(getBoard());
+        if(nextChar === document.getElementById("playingChar").value)
+            return true;
+        else
+            return false;
+    }
+}
+
 function switchOpponent(){
     var opponent = document.getElementById("switchOpponent").value;
-    if (opponent === "ai")
+    if (opponent === "ai"){
         document.getElementById("switchOpponent").value = 'human';
-    else
+    }
+    else{
         document.getElementById("switchOpponent").value = 'ai';
+        //document.getElementById("playerTurn").innerHTML = "Player Turn (X)";// player is by default first
+    }
+
+
     resetGame();
+}
+
+// change who the human player plays as
+function changePlayingChar(){
+    var opponent = document.getElementById("switchOpponent").value;
+    if (opponent === "ai") {
+        // determine current player's character
+        var playingCharText = document.getElementById("playerTurn").innerHTML;
+        // see if it contains an X
+        var index = playingCharText.indexOf("O");// returns -1 if not found
+
+        if (index == -1) {// player's char is an X
+            document.getElementById("playingChar").value = 'O';
+            var playingChar = document.getElementById("playingChar").value;
+            document.getElementById("playerTurn").innerHTML = 'Player Turn (' + playingChar + ')';
+
+        } else {        // player's char is an )
+            document.getElementById("playingChar").value = 'X';
+            var playingChar = document.getElementById("playingChar").value;
+            document.getElementById("playerTurn").innerHTML = 'Player Turn (' + playingChar + ')';
+
+        }
+        //document.getElementById("playerTurn").innerHTML = 'Player Turn (' + playingChar + ')';// already done in resetGame
+        resetGame();
+    }
 }
 
 function displayWinMsg(arr){
     //arr[0] contains the boolean value if a player has won
     if(arr[0]){
-        var winningPlayer = 2;
-        //arr[1] contains the winning character
-        if(arr[1] === 'X')
-            winningPlayer = 1;
+        var opponent = document.getElementById("switchOpponent").value;
+        if (opponent === "ai"){ // vs. AI
+            if(arr[1] == document.getElementById("playingChar").value){ // human won
+                document.getElementById("winner").innerHTML = ("Game Over. You won!");
+            } else { // AI won
+                document.getElementById("winner").innerHTML = ("Game Over. You lose!");
+            }
+        } else { // 2 humans playing
+            var winningPlayer = 2;
+            //arr[1] contains the winning character
+            if(arr[1] === 'X')
+                winningPlayer = 1;
 
+            document.getElementById("winner").innerHTML = ("Game Over. Player " + winningPlayer + " won.");
+        }
         document.getElementById("playerTurn").innerHTML = "";
-        document.getElementById("winner").innerHTML = ("Game Over. Player " + winningPlayer + " won.");
-
         document.getElementById("playingChar").value = "Game Over"; // Sentinel value is "Game Over"
     }
 }
@@ -239,8 +266,24 @@ function resetGame(){
     }
 
     document.getElementById("winner").innerHTML = "";       //reset end game message
-    document.getElementById("playingChar").value = "X";    //reset to player 1
-    document.getElementById("playerTurn").innerHTML = "Player 1's Turn";    //reset to player 1's turn
+
+    var opponent = document.getElementById("switchOpponent").value;
+    if (opponent === "ai"){
+        var playingCharText = document.getElementById("playerTurn").innerHTML;
+        var index = playingCharText.indexOf("O");// returns -1 if not found
+
+        if (index == -1) {// player's char is an X
+            document.getElementById("playingChar").value = 'X';
+        } else {        // player's char is an O
+            document.getElementById("playingChar").value = 'O';
+        }
+        var playingChar = document.getElementById("playingChar").value;
+        document.getElementById("playerTurn").innerHTML = 'Player Turn (' + playingChar + ')';
+    } else {
+        document.getElementById("playerTurn").innerHTML = "Player 1's Turn";    //reset to player 1's turn
+        document.getElementById("playingChar").value = "X";    //reset to player 1, if ai, don't want to change playingChar this way
+    }
+
 }
 
 // returns a character representing the endgame from the perspective of ai Player
@@ -450,62 +493,33 @@ function calculateScore(board, aiChar, lastPos = false, depth){
     // The board is in a state where a player just made a move, so to get the player that just moved
     // we have to reverse whose turn it is currently
     // if it's the ai's turn, we get the maximum element, if it's the human's turn we get the min element
-    if(depth == 1)
-        console.log(lastPos);
-    if(depth == 0)
-        console.log(scorePosArr);
     return (aiChar != whoseTurn(board)) ? getMaxElement(scorePosArr) : getMinElement(scorePosArr);
 }
 
-// var board = [
-//     ['O', '', 'X'],
-//     ['X', '', 'X'],
-//     ['', 'O', 'O']
-// ];
+// moves the AI on the board, is called every second, will check if the ai can move
+// and will only move if the AI should
+function processAIMove(){
+    // only proceed if playing against ai and the player cannot move which means the ai should move
+    var opponent = document.getElementById("switchOpponent").value;
 
-// var board = [
-//     ['X', 'O', 'O'],
-//     ['X', 'O', 'X'],
-//     ['', '', '']
-// ];
-//
-// var aiChar = 'X';
-//
-// console.log(calculateScore(board, aiChar));
-//
-// var arr = [
-//     [-10, [1,2]], [0, [2,2]], [10, [1,1]]
-//     ];
+    if (opponent === 'ai' && !playerCanMove()) {
+        // process ai move
+        var aiChar = (document.getElementById("playingChar").value === "X") ? "O" : "X";
+        var scoreArray = calculateScore(getBoard(), aiChar, false, 0);
+        var board = getBoard();
+        board[scoreArray[1][0]][scoreArray[1][1]] = aiChar;
+        var x = scoreArray[1][0].toString();
+        var y = scoreArray[1][1].toString();
+        document.getElementById(x + y).innerHTML = aiChar;// ai Move
 
-//alert(getMaxScoreBoardPos(items));
-//console.log(getMinElement(arr));
-/*
-var arr =  [];
-alert(getMinElement(arr));
-*/
+        var arr = checkWinningCondition();
+        displayWinMsg(arr);
 
-//var aiPlayer = 'X';
-// var items = [
-//     ['', 'X', ''],
-//     ['O', '', ''],
-//     ['', '', '']
-// ];
-// var bobby = makeMoveGrid(items);
-// console.log(items);
-// console.log(bobby);
-// alert(makeMoveGrid(items));
-// alert(items);
-//alert(getEndGame(items, aiPlayer));
+        if (checkDrawCondition() && !arr[0])
+            displayDrawMsg();
+    }
+}
 
-
-
-/*
-var items = [
-    [false, false, false],
-    [false, false, false],
-    [false, false, false]
-];
-
-alert(checkPossibleMovesLeft(items));
-*/
-
+window.setInterval(function(){
+    processAIMove();
+}, 1000);
