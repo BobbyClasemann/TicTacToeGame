@@ -306,6 +306,18 @@ function getEndGame (board, aiPlayer) {
     }
 }
 
+// returns true/false value depending on if the game is in an endgame state
+function inGameOverState(board){
+    var arr = checkWinningCondition(board);
+
+    if(arr[0])
+        return true;
+    if(checkDrawCondition(board))
+        return true;
+
+    return false;
+}
+
 // returns boolean if game is in endgame state
 function isInEndGame(board){
     return (getEndGame(board, 'X') === "") ? false : true;
