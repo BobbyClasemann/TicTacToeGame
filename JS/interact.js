@@ -435,13 +435,13 @@ function calculateScore(board, aiChar, lastPos = false, depth){
 
         switch(endGameChar) {
             case "W":
-                scorePosArr.push([10 - depth, lastPos]);
+                scorePosArr.push([10 - depth, lastPos]);// value quicker wins
                 break;
             case "D":
                 scorePosArr.push([0, lastPos]);
                 break;
             case "L":
-                scorePosArr.push([-10 - depth, lastPos]);
+                scorePosArr.push([-10 - depth, lastPos]);// extend loss
                 break;
             default:
                 // error out
