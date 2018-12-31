@@ -1,31 +1,90 @@
 function processTurn(ID){
-    var content = document.getElementById(ID).innerHTML;
+    // determine if playing against human or ai
+    var opponent = document.getElementById("switchOpponent").value;
 
-    //cannot change the existing element
-    if (content === "O" || content === "X") {
-        return;
+    if (opponent === 'ai'){
+        var content = document.getElementById(ID).innerHTML;
+
+        //cannot change the existing element
+        if (content === "O" || content === "X") {
+            return;
+        }
+
+        var playChar = document.getElementById("playingChar").value;   //get current play character
+        if (playChar === "X" || playChar === "O")
+            document.getElementById(ID).innerHTML = playChar;               //change node to current play character
+
+        //reset hidden filed to next player's character
+        if (playChar === "X") {
+            document.getElementById("playingChar").value = "O";        //change current play char to O
+            document.getElementById("playerTurn").innerHTML = "Your Turn";
+        }
+        else if (playChar === "O") {
+
+            document.getElementById("playingChar").value = "X";       //change current play char to X
+            document.getElementById("playerTurn").innerHTML = "AI Turn";
+        }
+
+
+        var arr = checkWinningCondition();
+        displayWinMsg(arr);
+
+        if (checkDrawCondition() && !arr[0])
+            displayDrawMsg();
+
+        // process ai move
+        if (document.getElementById("playingChar").value === 'X'){
+            var scoreArray = calculateScore(getBoard(), 'X');
+            console.log(scoreArray);
+            var board = getBoard();
+            board[scoreArray[1][0]][scoreArray[1][1]] = 'X';
+            var x = scoreArray[1][0].toString();
+            var y = scoreArray[1][1].toString();
+            processTurn(x + y);
+        }
+    }
+    else {
+
+        var content = document.getElementById(ID).innerHTML;
+
+        //cannot change the existing element
+        if (content === "O" || content === "X") {
+            return;
+        }
+
+        var playChar = document.getElementById("playingChar").value;   //get current play character
+        if (playChar === "X" || playChar === "O")
+            document.getElementById(ID).innerHTML = playChar;               //change node to current play character
+
+        //reset hidden filed to next player's character
+        if (playChar === "X") {
+            document.getElementById("playingChar").value = "O";        //change current play char to O
+            document.getElementById("playerTurn").innerHTML = "Player 2's Turn";
+        }
+        else if (playChar === "O") {
+            document.getElementById("playingChar").value = "X";       //change current play char to X
+            document.getElementById("playerTurn").innerHTML = "Player 1's Turn";
+        }
+
+
+        var arr = checkWinningCondition();
+        displayWinMsg(arr);
+
+        if (checkDrawCondition() && !arr[0])
+            displayDrawMsg();
+    }
+}
+
+function switchOpponent(){
+    var opponent = document.getElementById("switchOpponent").value;
+    if (opponent === "ai")
+        document.getElementById("switchOpponent").value = 'human';
+    else{
+        document.getElementById("switchOpponent").value = 'ai';
+        forceStart();
     }
 
-    var playChar = document.getElementById("playingChar").value;   //get current play character
-    if(playChar === "X" || playChar === "O")
-        document.getElementById(ID).innerHTML = playChar;               //change node to current play character
-
-    //reset hidden filed to next player's character
-    if (playChar === "X") {
-        document.getElementById("playingChar").value = "O";        //change current play char to O
-        document.getElementById("playerTurn").innerHTML = "Player 2's Turn";
-    }
-    else if (playChar === "O"){
-        document.getElementById("playingChar").value = "X";       //change current play char to X
-        document.getElementById("playerTurn").innerHTML = "Player 1's Turn";
-    }
-
-
-    var arr = checkWinningCondition();
-    displayWinMsg(arr);
-
-    if (checkDrawCondition() && !arr[0])
-        displayDrawMsg();
+    resetGame();
 }
 
 function displayWinMsg(arr){
@@ -181,7 +240,10 @@ function resetGame(){
     document.getElementById("winner").innerHTML = "";       //reset end game message
     document.getElementById("playingChar").value = "X";    //reset to player 1
     document.getElementById("playerTurn").innerHTML = "Player 1's Turn";    //reset to player 1's turn
-}
+    if (document.getElementById("switchOpponent").value === "ai"){
+        forceStart();
+    }
+        }
 
 // returns a character representing the endgame from the perspective of ai Player
 // board is a 3x3 grid of X's and O's
@@ -189,8 +251,6 @@ function resetGame(){
 function getEndGame (board, aiPlayer) {
     var arr = checkWinningCondition(board);
 
-    console.log(arr);
-    console.log(checkDrawCondition(board));
     if (checkDrawCondition(board) && !arr[0]) {
         return 'D';                  //return draw if draw condition is true and no winner\
     }
@@ -203,6 +263,11 @@ function getEndGame (board, aiPlayer) {
     else {
         return "";                 //error check case
     }
+}
+
+// returns boolean if game is in endgame state
+function isInEndGame(board){
+    return (getEndGame(board, 'X') === "") ? false : true;
 }
 
 // receives a 3x3 boolean array and checks if there are any T values remaining in the array
@@ -235,8 +300,8 @@ function getNextAvailablePosition(movesGrid){
 // determines which character/player should go next,
 // Note: does not check for endgames
 function whoseTurn(board){
-    xCount = 0;
-    oCount = 0;
+    var xCount = 0;
+    var oCount = 0;
 
     for(var i = 0; i < 3; i++){
         for(var j = 0; j < 3; j++){
@@ -343,18 +408,76 @@ function getMaxScoreBoardPos(scoreBoard){
     return maxPos;
 }
 
-var items = [
+// board is X's and O's
+// aiChar is either an 'X' or an 'O'
+// lastPos is the last position an x or an o was placed
+// Note: lastPos will never be referenced when false because it's referenced only in an endgame scenario which means
+// the board would not be empty and therefore there would be a lastPos
+function calculateScore(board, aiChar, lastPos = false){
+    var scorePosArr = []; // each element will be [score, [x,y]]
+
+    if(!isInEndGame(board)){
+        var moveGrid = makeMoveGrid(board);
+
+        while(checkPossibleMovesLeft(moveGrid)){
+            var position = getNextAvailablePosition(moveGrid);// next position to place a character
+            if(!position){
+                // error
+            }
+            var x = position[0];
+            var y = position[1];
+
+            moveGrid[x][y] = false;// avoid recursive calls with the same board configuration
+            var newBoard = boardCopy(board);
+            newBoard[x][y] = whoseTurn(newBoard);
+            scorePosArr.push(calculateScore(newBoard, aiChar, position));// recursive call
+        }
+    } else { // end game
+        var endGameChar = getEndGame(board, aiChar);
+
+        switch(endGameChar) {
+            case "W":
+                scorePosArr.push([10, lastPos]);
+                break;
+            case "D":
+                scorePosArr.push([0, lastPos]);
+                break;
+            case "L":
+                scorePosArr.push([-10, lastPos]);
+                break;
+            default:
+                // error out
+        }
+    }
+    // The board is in a state where a player just made a move, so to get the player that just moved
+    // we have to reverse whose turn it is currently
+    // if it's the ai's turn, we get the maximum element, if it's the human's turn we get the min element
+    var ch = whoseTurn(board);
+    return (aiChar != whoseTurn(board)) ? getMaxElement(scorePosArr) : getMinElement(scorePosArr);
+}
+
+// var board = [
+//     ['O', '', 'X'],
+//     ['X', '', 'X'],
+//     ['', 'O', 'O']
+// ];
+
+var board = [
     ['X', 'O', 'O'],
     ['X', 'O', 'X'],
-    ['O', 'X', 'O']
+    ['', '', '']
 ];
 
-var arr = [
-    [-10, [1,2]], [0, [2,2]], [10, [1,1]]
-    ];
+var aiChar = 'X';
+
+console.log(calculateScore(board, aiChar));
+//
+// var arr = [
+//     [-10, [1,2]], [0, [2,2]], [10, [1,1]]
+//     ];
 
 //alert(getMaxScoreBoardPos(items));
-console.log(getMinElement(arr));
+//console.log(getMinElement(arr));
 /*
 var arr =  [];
 alert(getMinElement(arr));
@@ -385,3 +508,14 @@ var items = [
 alert(checkPossibleMovesLeft(items));
 */
 
+function forceStart(){
+    var scoreArray = calculateScore(getBoard(), 'X');
+    console.log(scoreArray);
+    var board = getBoard();
+    board[scoreArray[1][0]][scoreArray[1][1]] = 'X';
+    var x = scoreArray[1][0].toString();
+    var y = scoreArray[1][1].toString();
+    processTurn(x + y);
+}window.onload = function() {
+    forceStart();
+};
